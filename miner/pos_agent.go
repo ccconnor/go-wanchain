@@ -122,6 +122,7 @@ func (self *Miner) backendTimerLoop(s Backend) {
 	h := s.BlockChain().GetHeaderByNumber(s.BlockChain().Config().PosFirstBlock.Uint64())
 
 	if nil == h {
+		fmt.Println("backendTimerLoop: startPosInit")
 		stop := self.posStartInit(s, localPublicKey)
 		if stop {
 			return
@@ -175,7 +176,7 @@ func (self *Miner) backendTimerLoop(s Backend) {
 				slotTime := (epochID*posconfig.SlotCount + slotID) * posconfig.SlotTime
 				leader := hex.EncodeToString(crypto.FromECDSAPub(leaderPub))
 				log.Info("leader ", "leader", leader)
-				if leader == localPublicKey && len(self.worker.chainSlotTimer)< chainTimerSlotSize{
+				if leader == localPublicKey && len(self.worker.chainSlotTimer) < chainTimerSlotSize {
 					self.worker.chainSlotTimer <- slotTime
 				}
 			}
@@ -206,6 +207,7 @@ func (self *Miner) posStartInit(s Backend, localPublicKey string) (stop bool) {
 	}
 
 	epochID, slotID := util.CalEpochSlotID(h0.Time.Uint64())
+	fmt.Println("posStartInit:", epochID, slotID, h0.Time.Uint64())
 
 	if slotID == posconfig.SlotCount-1 {
 		epochID += 1
@@ -213,6 +215,7 @@ func (self *Miner) posStartInit(s Backend, localPublicKey string) (stop bool) {
 	} else {
 		slotID += 1
 	}
+	fmt.Println("posStartInit:", slotID)
 
 	leaderPub, _ := slotleader.GetSlotLeaderSelection().GetSlotLeader(0, slotID)
 	leader := hex.EncodeToString(crypto.FromECDSAPub(leaderPub))

@@ -45,15 +45,14 @@ type Epocher struct {
 }
 
 type RefundInfo struct {
-	Addr common.Address
+	Addr   common.Address
 	Amount *big.Int
 }
 
 type EpochInfo struct {
-	EpochID uint64
+	EpochID     uint64
 	BlockNumber uint64
 }
-
 
 var epocherInst *Epocher = nil
 
@@ -158,7 +157,7 @@ func (e *Epocher) reportSelectELFailed(epochId uint64) {
 	if epochId == 0 {
 		return
 	}
-	
+
 	failedTimes := 1
 	if epochId > 0 {
 		if !e.IsGenerateELSuc(epochId - 1) {
@@ -323,9 +322,11 @@ func (e *Epocher) epochLeaderSelection(r []byte, ps ProposerSorter, epochId uint
 	log.Debug("epochLeaderSelection selecting")
 	selectionCount := posconfig.EpochLeaderCount
 	info, err := e.GetWhiteInfo(epochId)
+	fmt.Println("wlcount:", info.WlCount.Uint64())
 	if err == nil {
 		selectionCount = posconfig.EpochLeaderCount - int(info.WlCount.Uint64())
 	}
+	fmt.Println("selectionCount:", selectionCount)
 	for i := 0; i < selectionCount; i++ {
 
 		crBig := new(big.Int).SetBytes(cr)
@@ -368,6 +369,7 @@ func (e *Epocher) GetWhiteInfo(epochId uint64) (*vm.UpgradeWhiteEpochLeaderParam
 
 func (e *Epocher) GetWhiteByEpochId(epochId uint64) ([]string, error) {
 	info, err := e.GetWhiteInfo(epochId)
+	fmt.Println("GetWhiteByEpochId:", epochId, info.WlIndex.Uint64(), info.WlCount.Uint64())
 	if err != nil {
 		return nil, err
 	}
@@ -689,9 +691,9 @@ func (e *Epocher) SetEpochIncentive(epochId uint64, infors [][]vm.ClientIncentiv
 	return nil
 }
 
-func recordStakeOut(infos []RefundInfo, addr common.Address, amount *big.Int)([]RefundInfo) {
-	record :=  RefundInfo{
-		Addr: addr,
+func recordStakeOut(infos []RefundInfo, addr common.Address, amount *big.Int) []RefundInfo {
+	record := RefundInfo{
+		Addr:   addr,
 		Amount: amount,
 	}
 	infos = append(infos, record)
@@ -702,12 +704,12 @@ func saveStakeOut(stakeOutInfo []RefundInfo, epochID uint64) error {
 	if err != nil {
 		return err
 	}
-	_, err = posdb.GetDb().Put(epochID, posconfig.StakeOutEpochKey,stakeByte)
+	_, err = posdb.GetDb().Put(epochID, posconfig.StakeOutEpochKey, stakeByte)
 	if err != nil {
 		log.Error("saveStakeOut Failed:", "error", err)
 		return err
 	}
-	log.Info("Save refund information done.","epochID",epochID)
+	log.Info("Save refund information done.", "epochID", epochID)
 	return nil
 }
 func StakeOutRun(stateDb *state.StateDB, epochID uint64) bool {
@@ -715,7 +717,7 @@ func StakeOutRun(stateDb *state.StateDB, epochID uint64) bool {
 		return true
 	}
 	vm.StakeoutSetEpoch(stateDb, epochID)
-	stakeOutInfo := make([]RefundInfo,0)
+	stakeOutInfo := make([]RefundInfo, 0)
 	stakers := vm.GetStakersSnap(stateDb)
 	for i := 0; i < len(stakers); i++ {
 		// stakeout delegated client. client will expire at the same time with delegate node
@@ -794,7 +796,7 @@ func StakeOutRun(stateDb *state.StateDB, epochID uint64) bool {
 		if epochID >= staker.StakingEpoch+staker.LockEpochs {
 			for j := 0; j < len(staker.Clients); j++ {
 				core.Transfer(stateDb, vm.WanCscPrecompileAddr, staker.Clients[j].Address, staker.Clients[j].Amount)
-				stakeOutInfo = recordStakeOut(stakeOutInfo,staker.Clients[j].Address, staker.Clients[j].Amount)
+				stakeOutInfo = recordStakeOut(stakeOutInfo, staker.Clients[j].Address, staker.Clients[j].Amount)
 			}
 			for j := 0; j < len(staker.Partners); j++ {
 				core.Transfer(stateDb, vm.WanCscPrecompileAddr, staker.Partners[j].Address, staker.Partners[j].Amount)
