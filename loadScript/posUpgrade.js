@@ -1,29 +1,27 @@
 
 
-var posControlDefinition = [
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "EpochId",
-				"type": "uint256"
-			},
-			{
-				"name": "wlIndex",
-				"type": "uint256"
-			},
-			{
-				"name": "wlCount",
-				"type": "uint256"
-			}
-		],
-		"name": "upgradeWhiteEpochLeader",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	}
-]
+var posControlDefinition = [{
+	"constant": false,
+	"inputs": [
+		{
+			"name": "EpochId",
+			"type": "uint256"
+		},
+		{
+			"name": "wlIndex",
+			"type": "uint256"
+		},
+		{
+			"name": "wlCount",
+			"type": "uint256"
+		}
+	],
+	"name": "upgradeWhiteEpochLeader",
+	"outputs": [],
+	"payable": false,
+	"stateMutability": "nonpayable",
+	"type": "function"
+}]
 
 var contractDef = eth.contract(posControlDefinition);
 var ContractAddr = "0x0000000000000000000000000000000000000264";

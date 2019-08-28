@@ -19,7 +19,6 @@ package pluto
 
 import (
 	"errors"
-	"fmt"
 	"math"
 	"math/big"
 
@@ -762,7 +761,6 @@ func (c *Pluto) Prepare(chain consensus.ChainReader, header *types.Header, minin
 // rewards given, and returns the final block.
 func (c *Pluto) Finalize(chain consensus.ChainReader, header *types.Header, state *state.StateDB, txs []*types.Transaction, uncles []*types.Header, receipts []*types.Receipt) (*types.Block, error) {
 	epochID, slotID := util.GetEpochSlotIDFromDifficulty(header.Difficulty)
-	fmt.Println("Finalize:", posconfig.FirstEpochId, epochID, posconfig.IncentiveDelayEpochs, slotID, posconfig.IncentiveStartStage)
 	if posconfig.FirstEpochId != 0 && epochID > posconfig.FirstEpochId+2 && epochID >= posconfig.IncentiveDelayEpochs && slotID > posconfig.IncentiveStartStage {
 		log.Debug("--------Incentive Start--------", "number", header.Number.String(), "epochID", epochID)
 		snap := state.Snapshot()
