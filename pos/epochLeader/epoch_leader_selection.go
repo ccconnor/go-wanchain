@@ -322,11 +322,9 @@ func (e *Epocher) epochLeaderSelection(r []byte, ps ProposerSorter, epochId uint
 	log.Debug("epochLeaderSelection selecting")
 	selectionCount := posconfig.EpochLeaderCount
 	info, err := e.GetWhiteInfo(epochId)
-	fmt.Println("wlcount:", info.WlCount.Uint64())
 	if err == nil {
 		selectionCount = posconfig.EpochLeaderCount - int(info.WlCount.Uint64())
 	}
-	fmt.Println("selectionCount:", selectionCount)
 	for i := 0; i < selectionCount; i++ {
 
 		crBig := new(big.Int).SetBytes(cr)
@@ -369,7 +367,6 @@ func (e *Epocher) GetWhiteInfo(epochId uint64) (*vm.UpgradeWhiteEpochLeaderParam
 
 func (e *Epocher) GetWhiteByEpochId(epochId uint64) ([]string, error) {
 	info, err := e.GetWhiteInfo(epochId)
-	fmt.Println("GetWhiteByEpochId:", epochId, info.WlIndex.Uint64(), info.WlCount.Uint64())
 	if err != nil {
 		return nil, err
 	}
