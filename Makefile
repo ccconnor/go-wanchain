@@ -6,9 +6,6 @@
 
 GOBIN = build/bin
 
-linuxDir=$(shell echo gwan-linux-amd64-`cat ./VERSION`-`git rev-parse --short=8 HEAD`)
-windowsDir=$(shell echo gwan-windows-amd64-`cat ./VERSION`-`git rev-parse --short=8 HEAD`)
-darwinDir=$(shell echo gwan-mac-amd64-`cat ./VERSION`-`git rev-parse --short=8 HEAD`)
 # The gwan target build gwan binary
 gwan:
 	go build -v -o $(GOBIN)/gwan ./cmd/gwan
